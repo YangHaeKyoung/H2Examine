@@ -11,9 +11,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.people.model.People;
-import com.people.service.PeopleService;
 
-@ContextConfiguration(locations = {"classpath:test-db-context.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class PeopleServiceTest {
 

@@ -22,9 +22,10 @@
 	<util:properties id="jdbcprop" location="classpath:properties/jdbc-properties.xml" />
 
 	<!-- datasource -->
-	<bean id="dataSource" class="org.h2.jdbcx.JdbcDataSource">
-		<property name="URL" value="#{jdbcprop['jdbc.url']}"/>
-		<property name="user" value="#{jdbcprop['jdbc.username']}"/>
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="#{jdbcprop['jdbc.driverClassName']}"/>
+		<property name="url" value="#{jdbcprop['jdbc.url']}"/>
+		<property name="username" value="#{jdbcprop['jdbc.username']}"/>
 		<property name="password" value="#{jdbcprop['jdbc.password']}"/>
 	</bean>
 
