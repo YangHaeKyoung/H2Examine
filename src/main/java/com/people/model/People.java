@@ -1,6 +1,9 @@
-package com.people;
+package com.people.model;
 
-public class PeopleInfo {
+import org.apache.ibatis.type.Alias;
+
+@Alias("people")
+public class People {
 	private String firstName;
 	private String lastName;
 	private String ssn;

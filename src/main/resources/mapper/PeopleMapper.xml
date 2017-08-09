@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.people.dao.PeopleDAO">
+
+    <insert id="insert" parameterType="people">
+        INSERT INTO people(first_name, last_name, ssn) 
+        VALUES (#{firstName}, #{lastName}, #{ssn})
+    </insert>
+    
+	<select id="select" parameterType="people" resultType="people">
+	   SELECT 
+	       first_name AS firstName,
+	       last_name AS lastName, 
+	       ssn
+	   FROM people
+	</select>
+
+</mapper>

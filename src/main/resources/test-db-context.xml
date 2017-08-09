@@ -4,23 +4,58 @@
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xmlns:util="http://www.springframework.org/schema/util"
 	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	   xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	   						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
 							http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
-							http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+							http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+							http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd
+							http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+							http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
+	<!-- bean scan -->
 	<context:component-scan base-package="com.people"/>
 
+	<!-- properties -->
 	<util:properties id="jdbcprop" location="classpath:properties/jdbc-properties.xml" />
 
-	<!-- RIS H2 DataSource Configuration For Test -->
+	<!-- datasource -->
 	<bean id="dataSource" class="org.h2.jdbcx.JdbcDataSource">
 		<property name="URL" value="#{jdbcprop['jdbc.url']}"/>
 		<property name="user" value="#{jdbcprop['jdbc.username']}"/>
 		<property name="password" value="#{jdbcprop['jdbc.password']}"/>
 	</bean>
 
+	<!-- db script -->
 	<jdbc:initialize-database>
 		<jdbc:script location="classpath:/initial-db/db-schema.sql" encoding="UTF-8"/>
 	</jdbc:initialize-database>
+	
+	<!-- mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:/mapper/**/*Mapper.xml" />
+		<property name="typeAliasesPackage" value="com.people.model" />
+	</bean>
+	
+	<!-- mybatis dao scan -->
+	<mybatis:scan base-package="com.people.dao" factory-ref="sqlSessionFactory" annotation="org.springframework.stereotype.Repository"/>
+	
+	<!-- transaction -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<aop:config proxy-target-class="true">
+		<aop:advisor id="testTransactionAdvice" advice-ref="transactionAdvice" pointcut="@target(org.springframework.stereotype.Service) and
+																						execution(* com..service.*Service.*(..)))" />
+	</aop:config>
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="delete*"  rollback-for="Exception" />
+			<tx:method name="update*"  rollback-for="Exception" />
+			<tx:method name="insert*"  rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
 </beans>
