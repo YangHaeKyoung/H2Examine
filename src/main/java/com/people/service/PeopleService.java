@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import com.people.dao.PeopleDAO;
 import com.people.model.People;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class PeopleService {
 
@@ -18,17 +21,17 @@ public class PeopleService {
 	public void insertPeoples() {
 		String uniqTag = String.valueOf(System.nanoTime());
 
-		System.out.println("[START] >>>>>>>>" + uniqTag);
+		log.debug("[START] >>>>>>>>" + uniqTag);
 
 		for (int idx = 0; idx < 5; idx++) {
 			People pInfo = new People();
 			pInfo.setFirstName("firstname" + idx + uniqTag);
 			pInfo.setLastName("lastname" + idx + uniqTag);
 			pInfo.setSsn(UUID.randomUUID().toString().substring(0, 11));
-			System.out.println("[INSERT-" + idx + "] >>>>>>>>>>>>>>>>>>" + peopleDAO.insert(pInfo));
+			log.debug("[INSERT-" + idx + "] >>>>>>>>>>>>>>>>>>" + peopleDAO.insert(pInfo));
 		}
 
-		System.out.println("[END] >>>>>>>>" + uniqTag);
+		log.debug("[END] >>>>>>>>" + uniqTag);
 	}
 
 	public List<People> selectPeoples() {
